@@ -1,5 +1,6 @@
-const { passError } = require("express-handlebars/lib/utils");
+
 const Product = require("../models/product");
+
 
 exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -14,10 +15,10 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  console.log(title); 
-  console.log(imageUrl); 
-  console.log(price); 
-  console.log(description); 
+  console.log(title);
+  console.log(imageUrl);
+  console.log(price);
+  console.log(description);
   Product.create({
     title,
     price,
@@ -58,14 +59,14 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
   Product.findByPk(prodId)
-    .then( (product) => {
-      product.title = updatedTitle ;
+    .then((product) => {
+      product.title = updatedTitle;
       req.body.pricee = updatedPrice;
       req.body.imageUrl = updatedImageUrl;
-      req.body.description = updatedDesc ;
-      product.save()
+      req.body.description = updatedDesc;
+      product.save();
     })
-    .then( result =>  console.log(" product updated "))
+    .then((result) => console.log(" product updated "))
     .catch((err) => console.log(err));
   res.redirect("/admin/products");
 };
@@ -84,6 +85,15 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId);
-  res.redirect("/admin/products");
+  Product.findByPk(prodId)
+    .then((product) => {
+      return product.destroy();
+    })
+    .then(result => {
+      console.log("PRODUCT DESTROYED");
+      res.redirect("/admin/products");
+    })
+    .catch(err => console.log(err));
 };
+
+

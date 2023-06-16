@@ -7,6 +7,8 @@ const errorController = require("./controllers/error");
 const sequalize = require("./util/database");
 const Product = require("./models/product");
 const User = require("./models/user");
+const Cart = require("./models/cart");
+const CartItem = require("./models/cart-item");
 
 const app = express();
 
@@ -49,9 +51,23 @@ User.hasMany(Product) establishes a one-to-many relationship between the User an
  */
 User.hasMany(Product);
 
+/*
+A user has one cart 
+*/
+User.hasOne(Cart);
+/*
+A cart belongs to user  
+*/
+Cart.belongsTo(User)
+/* 
+Cart belongs to many Products 
+*/
+Cart.belongsToMany(Product, {through : CartItem})
+Product.belongsToMany(Cart, {through : CartItem})
+
 sequalize
-  // .sync({ force : true })
-  .sync()
+  .sync({ force : true })
+  // .sync()
   .then((result) => {  
     return User.findByPk(1)
   })
